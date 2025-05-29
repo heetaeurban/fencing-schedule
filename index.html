@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>펜싱 대진표 자동 생성기</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; }
+        input { margin: 5px; }
+        table, th, td { border: 1px solid #aaa; border-collapse: collapse; padding: 6px; }
+        th { background: #eee; }
+    </style>
+</head>
+<body>
+    <h2>펜싱클럽 대진표 자동 생성기</h2>
+    <form id="nameForm">
+        <p>8명의 이름을 입력하세요:</p>
+        <div id="inputs"></div>
+        <button type="submit">대진표 생성</button>
+    </form>
+    <div id="result"></div>
+    <script>
+        // 입력창 8개 생성
+        const inputsDiv = document.getElementById('inputs');
+        for(let i=0; i<8; i++) {
+            inputsDiv.innerHTML += `<input type="text" required placeholder="이름${i+1}" id="name${i}"><br>`;
+        }
+
+        document.getElementById('nameForm').onsubmit = function(e) {
+            e.preventDefault();
+            // 이름 수집
+            let names = [];
+            for(let i=0; i<8; i++) {
+                let val = document.getElementById('name'+i).value.trim();
+                if(!val) { alert("모든 이름을 입력하세요!"); return; }
+                names.push(val);
+            }
+            // 모든 조합 생성
+            let matches = [];
+            for(let i=0; i<8; i++) {
+                for(let j=i+1; j<8; j++) {
+                    matches.push([names[i], names[j]]);
+                }
+            }
+            // 라운드로 스케줄링 (한 라운드에 최대 3경기)
+            let rounds = [];
+            while(matches.length > 0) {
+                let round = [];
+                let used = new Set();
+                for(let k=0; k<matches.length; k++) {
+                    let [a, b] = matches[k];
+                    if(!used.has(a) && !used.has(b) && round.length < 3) {
+                        round.push(matches[k]);
+                        used.add(a); used.add(b);
+                        matches.splice(k, 1); k--;
+                    }
+                }
+                rounds.push(round);
+            }
+            // 결과 출력
+            let html = `<h3>대진표 및 경기 시간표</h3>`;
+            html += `<table><tr><th>라운드</th><th>경기</th></tr>`;
+            rounds.forEach((round, idx) => {
+                html += `<tr><td>라운드 ${idx+1}<br>(${3*(idx)}~${3*(idx+1)}분)</td><td>`;
+                round.forEach(match => {
+                    html += `${match[0]} vs ${match[1]}<br>`;
+                });
+                html += `</td></tr>`;
+            });
+            html += `</table>`;
+            html += `<p>총 경기 시간: <b>${rounds.length * 3}분</b> (라운드당 3분, 최대 3경기 동시 진행)</p>`;
+            document.getElementById('result').innerHTML = html;
+        }
+    </script>
+</body>
+</html>
