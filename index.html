@@ -4,25 +4,37 @@
     <meta charset="UTF-8">
     <title>펜싱 대진표 자동 생성기</title>
     <style>
-        body { font-family: sans-serif; margin: 40px; }
-        input { margin: 5px; }
-        table, th, td { border: 1px solid #aaa; border-collapse: collapse; padding: 6px; }
-        th { background: #eee; }
+        body { 
+            font-family: sans-serif; 
+            margin: 40px; 
+            background: #2196f3; /* 파란색 배경 */
+            color: #fff;
+        }
+        input { margin: 5px; padding: 5px; border-radius: 4px; border: none;}
+        label { margin-right: 10px; }
+        table, th, td { border: 1px solid #fff; border-collapse: collapse; padding: 6px; }
+        th { background: #1976d2; }
+        td { background: #42a5f5; }
+        .form-area { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px;}
+        button { background: #1976d2; color: #fff; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;}
+        button:hover { background: #1565c0; }
+        .cheer { margin-top: 30px; font-size: 1.3em; font-weight: bold; text-align: center; }
     </style>
 </head>
 <body>
     <h2>펜싱클럽 대진표 자동 생성기</h2>
-    <form id="nameForm">
+    <form id="nameForm" class="form-area">
         <p>8명의 이름을 입력하세요:</p>
         <div id="inputs"></div>
         <button type="submit">대진표 생성</button>
     </form>
     <div id="result"></div>
+    <div class="cheer" id="cheer"></div>
     <script>
-        // 입력창 8개 생성
+        // 입력창 8개 생성 (펜서1, 펜서2 ...)
         const inputsDiv = document.getElementById('inputs');
         for(let i=0; i<8; i++) {
-            inputsDiv.innerHTML += `<input type="text" required placeholder="이름${i+1}" id="name${i}"><br>`;
+            inputsDiv.innerHTML += `<label>펜서${i+1} <input type="text" required placeholder="이름${i+1}" id="name${i}"></label><br>`;
         }
 
         document.getElementById('nameForm').onsubmit = function(e) {
@@ -69,6 +81,9 @@
             html += `</table>`;
             html += `<p>총 경기 시간: <b>${rounds.length * 3}분</b> (라운드당 3분, 최대 3경기 동시 진행)</p>`;
             document.getElementById('result').innerHTML = html;
+
+            // 응원 문구 출력
+            document.getElementById('cheer').innerText = "모두 파이팅! 멋진 경기를 기대합니다! ⚔️🤺";
         }
     </script>
 </body>
